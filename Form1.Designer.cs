@@ -40,6 +40,7 @@ namespace Registrator {
             this.saveBtn = new System.Windows.Forms.Button();
             this.makeBtn = new System.Windows.Forms.Button();
             this.formatBox = new System.Windows.Forms.GroupBox();
+            this.specijalniBox = new System.Windows.Forms.CheckBox();
             this.formatText = new System.Windows.Forms.ComboBox();
             this.openBox = new System.Windows.Forms.GroupBox();
             this.openText = new System.Windows.Forms.TextBox();
@@ -52,7 +53,6 @@ namespace Registrator {
             this.procenatText = new System.Windows.Forms.Label();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.specijalniBox = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel.SuspendLayout();
             this.panelRight.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -261,12 +261,26 @@ namespace Registrator {
             this.formatBox.TabStop = false;
             this.formatBox.Text = "Format registra";
             // 
+            // specijalniBox
+            // 
+            this.specijalniBox.AutoSize = true;
+            this.specijalniBox.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.specijalniBox.Location = new System.Drawing.Point(381, 42);
+            this.specijalniBox.Margin = new System.Windows.Forms.Padding(8);
+            this.specijalniBox.Name = "specijalniBox";
+            this.specijalniBox.Size = new System.Drawing.Size(176, 29);
+            this.specijalniBox.TabIndex = 5;
+            this.specijalniBox.Text = "Specijalni znakovi";
+            this.specijalniBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.specijalniBox.UseVisualStyleBackColor = true;
+            // 
             // formatText
             // 
             this.formatText.BackColor = System.Drawing.SystemColors.Window;
             this.formatText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.formatText.Items.AddRange(new object[] {
             "%2 1. %8 pojam %60 1, 2, 3",
+            "\\t pojam %55 1, 2, 3 \\n",
             "1. pojam 1, 2, 3",
             "1. pojam: 1 2 3",
             "pojam: 1, 2, 3.",
@@ -388,19 +402,6 @@ namespace Registrator {
             // 
             this.saveFileDialog.Filter = "Word dokument (*.docx)|*.docx|Čisti tekst (*.txt)|*.txt";
             this.saveFileDialog.RestoreDirectory = true;
-            // 
-            // specijalniBox
-            // 
-            this.specijalniBox.AutoSize = true;
-            this.specijalniBox.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.specijalniBox.Location = new System.Drawing.Point(381, 42);
-            this.specijalniBox.Margin = new System.Windows.Forms.Padding(8);
-            this.specijalniBox.Name = "specijalniBox";
-            this.specijalniBox.Size = new System.Drawing.Size(176, 29);
-            this.specijalniBox.TabIndex = 5;
-            this.specijalniBox.Text = "Specijalni znakovi";
-            this.specijalniBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.specijalniBox.UseVisualStyleBackColor = true;
             // 
             // Registrator
             // 
