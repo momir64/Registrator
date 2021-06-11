@@ -52,6 +52,7 @@ namespace Registrator {
             this.procenatText = new System.Windows.Forms.Label();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.specijalniBox = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel.SuspendLayout();
             this.panelRight.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -146,7 +147,7 @@ namespace Registrator {
             this.pojmoviText.ScrollWidth = 74;
             this.pojmoviText.ScrollWidthTracking = false;
             this.pojmoviText.Size = new System.Drawing.Size(964, 737);
-            this.pojmoviText.TabIndex = 7;
+            this.pojmoviText.TabIndex = 9;
             this.pojmoviText.WrapMode = ScintillaNET.WrapMode.Word;
             // 
             // tabRegistar
@@ -167,10 +168,11 @@ namespace Registrator {
             this.registarText.HScrollBar = false;
             this.registarText.Location = new System.Drawing.Point(0, 0);
             this.registarText.Name = "registarText";
+            this.registarText.ReadOnly = true;
             this.registarText.ScrollWidth = 74;
             this.registarText.ScrollWidthTracking = false;
             this.registarText.Size = new System.Drawing.Size(964, 737);
-            this.registarText.TabIndex = 8;
+            this.registarText.TabIndex = 10;
             this.registarText.WrapMode = ScintillaNET.WrapMode.Word;
             // 
             // panelLeft
@@ -216,7 +218,7 @@ namespace Registrator {
             this.clearBtn.Margin = new System.Windows.Forms.Padding(6);
             this.clearBtn.Name = "clearBtn";
             this.clearBtn.Size = new System.Drawing.Size(180, 60);
-            this.clearBtn.TabIndex = 7;
+            this.clearBtn.TabIndex = 8;
             this.clearBtn.Text = "Očisti sva polja";
             this.clearBtn.UseVisualStyleBackColor = true;
             this.clearBtn.Click += new System.EventHandler(this.ClearBtn_Click);
@@ -229,7 +231,7 @@ namespace Registrator {
             this.saveBtn.Margin = new System.Windows.Forms.Padding(6);
             this.saveBtn.Name = "saveBtn";
             this.saveBtn.Size = new System.Drawing.Size(180, 60);
-            this.saveBtn.TabIndex = 6;
+            this.saveBtn.TabIndex = 7;
             this.saveBtn.Text = "Sačuvaj";
             this.saveBtn.UseVisualStyleBackColor = true;
             this.saveBtn.Click += new System.EventHandler(this.SaveBtn_Click);
@@ -242,13 +244,14 @@ namespace Registrator {
             this.makeBtn.Margin = new System.Windows.Forms.Padding(6);
             this.makeBtn.Name = "makeBtn";
             this.makeBtn.Size = new System.Drawing.Size(180, 60);
-            this.makeBtn.TabIndex = 5;
+            this.makeBtn.TabIndex = 6;
             this.makeBtn.Text = "Napravi registar";
             this.makeBtn.UseVisualStyleBackColor = true;
             this.makeBtn.Click += new System.EventHandler(this.MakeBtn_Click);
             // 
             // formatBox
             // 
+            this.formatBox.Controls.Add(this.specijalniBox);
             this.formatBox.Controls.Add(this.formatText);
             this.formatBox.Location = new System.Drawing.Point(14, 513);
             this.formatBox.Margin = new System.Windows.Forms.Padding(5);
@@ -260,17 +263,19 @@ namespace Registrator {
             // 
             // formatText
             // 
+            this.formatText.BackColor = System.Drawing.SystemColors.Window;
             this.formatText.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.formatText.FormattingEnabled = true;
             this.formatText.Items.AddRange(new object[] {
+            "%2 1. %8 pojam %60 1, 2, 3",
             "1. pojam 1, 2, 3",
             "1. pojam: 1 2 3",
             "pojam: 1, 2, 3.",
             "pojam 1, 2, 3",
             "pojam 1 2 3"});
             this.formatText.Location = new System.Drawing.Point(15, 40);
+            this.formatText.Margin = new System.Windows.Forms.Padding(8);
             this.formatText.Name = "formatText";
-            this.formatText.Size = new System.Drawing.Size(535, 33);
+            this.formatText.Size = new System.Drawing.Size(350, 33);
             this.formatText.TabIndex = 4;
             this.formatText.Text = "pojam 1, 2, 3";
             // 
@@ -381,9 +386,21 @@ namespace Registrator {
             // 
             // saveFileDialog
             // 
-            this.saveFileDialog.Filter = "Word dokument (*.docx)|*.docx|Word 97-2003 dokument (*.doc)|*.doc|Čisti tekst (*." +
-    "txt)|*.txt";
+            this.saveFileDialog.Filter = "Word dokument (*.docx)|*.docx|Čisti tekst (*.txt)|*.txt";
             this.saveFileDialog.RestoreDirectory = true;
+            // 
+            // specijalniBox
+            // 
+            this.specijalniBox.AutoSize = true;
+            this.specijalniBox.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.specijalniBox.Location = new System.Drawing.Point(381, 42);
+            this.specijalniBox.Margin = new System.Windows.Forms.Padding(8);
+            this.specijalniBox.Name = "specijalniBox";
+            this.specijalniBox.Size = new System.Drawing.Size(176, 29);
+            this.specijalniBox.TabIndex = 5;
+            this.specijalniBox.Text = "Specijalni znakovi";
+            this.specijalniBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.specijalniBox.UseVisualStyleBackColor = true;
             // 
             // Registrator
             // 
@@ -408,6 +425,7 @@ namespace Registrator {
             this.straniceBox.ResumeLayout(false);
             this.straniceBox.PerformLayout();
             this.formatBox.ResumeLayout(false);
+            this.formatBox.PerformLayout();
             this.openBox.ResumeLayout(false);
             this.openBox.PerformLayout();
             this.opsegBox.ResumeLayout(false);
@@ -448,6 +466,7 @@ namespace Registrator {
         private System.Windows.Forms.ProgressBar gotovoBar;
         private System.Windows.Forms.GroupBox straniceBox;
         private System.Windows.Forms.TextBox straniceText;
+        private System.Windows.Forms.CheckBox specijalniBox;
     }
 }
 

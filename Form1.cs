@@ -39,32 +39,94 @@ namespace Registrator {
         }
 
         private async void SaveBtn_Click(object sender, EventArgs e) {
-            saveFileDialog.FileName = "registar";
-            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
-                var progress = new Progress<int>(v => { gotovoBar.Value = v; });
-                if (DifferentInput()) {
-                    SetInput();
-                    gotovoBar.Value = 0;
-                    gotovoBar.Visible = true;
-                    await Task.Run(() => stranice = MakeRegistar(fileName, (string[])pojmovi.Clone(), procenat, opseg, ignoreStranice, progress));
-                }
-                CreateRegistar();
-                switch (Path.GetExtension(saveFileDialog.FileName).ToLower()) {
-                    case ".doc":
-                    case ".docx":
+            try {
+                await CreateRegistarAsync();
+                saveFileDialog.FileName = "registar";
+                if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+                    if (Path.GetExtension(saveFileDialog.FileName).ToLower() == ".docx") {
                         DocX doc = DocX.Create(saveFileDialog.FileName);
                         doc.InsertParagraph(registar);
                         doc.Save();
-                        break;
-                    default:
+                    }
+                    else
                         File.WriteAllText(saveFileDialog.FileName, registar);
-                        break;
+                    gotovoBar.Visible = false;
                 }
-                gotovoBar.Visible = false;
+            }
+            catch (Exception ex) when (ex.Message == "Empty file name") {
+                MessageBox.Show("Otvori knjigu u kojoj se traže pojmovi!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) when (ex.Message.Contains("not found as file or resource.")) {
+                MessageBox.Show("Izabrana knjiga više ne postoji!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) when (ex.Message == "Empty format") {
+                MessageBox.Show("Polje format registra ne može biti prazno!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) when (ex.Message == "Empty pojmovi") {
+                MessageBox.Show("Potrebno je uneti pojmove koji se traže!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) when (ex.Message == "Stranice format error") {
+                MessageBox.Show("Stranice koje se preskaču su unete u lošem formatu!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) when (ex.Message == "Registar format error") {
+                MessageBox.Show("Format registra je neispravan!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private async void MakeBtn_Click(object sender, EventArgs e) {
+            try {
+                await CreateRegistarAsync();
+                registarText.ReadOnly = false;
+                registarText.Text = registar;
+                registarText.ReadOnly = true;
+                tabControl.SelectedTab = tabControl.TabPages["tabRegistar"];
+                gotovoBar.Visible = false;
+            }
+            catch (Exception ex) when (ex.Message == "Empty file name") {
+                MessageBox.Show("Otvori knjigu u kojoj se traže pojmovi!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) when (ex.Message.Contains("not found as file or resource.")) {
+                MessageBox.Show("Izabrana knjiga više ne postoji!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) when (ex.Message == "Empty format") {
+                MessageBox.Show("Polje format registra ne može biti prazno!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) when (ex.Message == "Empty pojmovi") {
+                MessageBox.Show("Potrebno je uneti pojmove koji se traže!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) when (ex.Message == "Stranice format error") {
+                MessageBox.Show("Stranice koje se preskaču su unete u lošem formatu!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) when (ex.Message == "Registar format error") {
+                MessageBox.Show("Format registra je neispravan!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task CreateRegistarAsync() {
+            if (formatText.Text.Trim() == "")
+                throw new Exception("Empty format");
+            if (pojmoviText.Text.Trim() == "")
+                throw new Exception("Empty pojmovi");
+            string formatStart, delimeter, end;
+            List<int> razmaci = new List<int>();
+            try {
+                formatRegistra = specijalniBox.Checked ? Regex.Unescape(formatText.Text) : formatText.Text;
+                formatRegistra = Regex.Replace(formatRegistra, "\r\n|\n|\r", "\r\n");
+                if (specijalniBox.Checked)
+                    foreach (Match match in Regex.Matches(formatRegistra, @"(?<=%)(\d+)"))
+                        razmaci.Add(int.Parse(match.Value));
+                formatRegistra = Regex.Replace(formatRegistra, "[0-9]{1,}", "0");
+                int pojamIndex = formatRegistra.IndexOf("pojam");
+                end = formatRegistra.Substring(pojamIndex);
+                int granica = (specijalniBox.Checked ? Regex.Match(end, "(?<!%)0").Index : end.IndexOf('0')) + pojamIndex;
+                formatStart = formatRegistra.Substring(0, granica);
+                end = formatRegistra.Substring(granica + 1);
+                delimeter = end.Substring(0, end.IndexOf('0'));
+                end = formatRegistra.Substring(formatRegistra.LastIndexOf('0') + 1);
+            }
+            catch (Exception) {
+                throw new Exception("Registar format error");
+            }
             var progress = new Progress<int>(v => { gotovoBar.Value = v; });
             if (DifferentInput()) {
                 SetInput();
@@ -72,42 +134,40 @@ namespace Registrator {
                 gotovoBar.Visible = true;
                 await Task.Run(() => stranice = MakeRegistar(fileName, (string[])pojmovi.Clone(), procenat, opseg, ignoreStranice, progress));
             }
-            CreateRegistar();
-            registarText.Text = registar;
-            tabControl.SelectedTab = tabControl.TabPages["tabRegistar"];
-            gotovoBar.Visible = false;
-        }
-
-        private void CreateRegistar() {
-            formatRegistra = Regex.Unescape(Regex.Replace(formatRegistra, "[0-9]{1,}", "0"));
-            int pojamIndex = formatRegistra.IndexOf("pojam");
-            int granica = formatRegistra.Substring(pojamIndex).IndexOf('0') + pojamIndex;
-            string formatStart = formatRegistra.Substring(0, granica);
-            string end = formatRegistra.Substring(granica + 1);
-            string delimeter = end.Substring(0, end.IndexOf('0'));
-            end = formatRegistra.Substring(formatRegistra.LastIndexOf('0') + 1);
             registar = "";
             for (int i = 0; i < pojmovi.Length; i++) {
-                registar += formatStart.Replace("pojam", pojmovi[i].Trim()).Replace("0", (i + 1).ToString());
+                string line = formatStart.Replace("pojam", pojmovi[i].Trim());
+                if (specijalniBox.Checked) {
+                    line = Regex.Replace(line, "(?<!%)0", (i + 1).ToString());
+                    foreach (int razmak in razmaci) {
+                        int ima = line.IndexOf("%0");
+                        line = new Regex("%0").Replace(line, new string(' ', Math.Max(0, razmak - ima)), 1);
+                    }
+                }
+                else
+                    line = line.Replace("0", (i + 1).ToString());
                 foreach (int stranica in stranice[i])
-                    registar += stranica + (stranica != stranice[i].Last() ? delimeter : end);
-                registar += "\r\n";
+                    line += stranica + (stranica != stranice[i].Last() ? delimeter : end);
+                registar += line + (i != pojmovi.Length - 1 ? "\r\n" : "");
             }
         }
 
         private void SetInput() {
-            formatRegistra = formatText.Text;
             fileName = openText.Text;
+            if (fileName.Trim() == "") {
+                passInput = true;
+                throw new Exception("Empty file name");
+            }
             ignoreStranice = StraniceArray(straniceText.Text, fileName);
             pojmovi = pojmoviText.Lines.Select(line => line.Text).ToArray();
             procenat = procenatBar.Value / 100f;
             opseg = opsegBar.Value / 10f;
         }
 
-        bool firstTime = true;
+        bool passInput = true;
         private bool DifferentInput() {
-            if (firstTime) {
-                firstTime = false;
+            if (passInput) {
+                passInput = false;
                 return true;
             }
             return fileName != openText.Text ||
@@ -124,10 +184,15 @@ namespace Registrator {
             string[] segmenti = stranice.Split(',');
             int pages = new PdfDocument(new PdfReader(pdfPath)).GetNumberOfPages();
             foreach (string segment in segmenti)
-                if (segment.Contains('-'))
-                    lista.AddRange(Enumerable.Range(Min(segment.Split('-')[0]), Max(segment.Split('-')[1], pages) - Min(segment.Split('-')[0]) + 1));
-                else if (segment.Trim() != "")
-                    lista.Add(int.Parse(segment));
+                try {
+                    if (segment.Contains('-'))
+                        lista.AddRange(Enumerable.Range(Min(segment.Split('-')[0]), Max(segment.Split('-')[1], pages) - Min(segment.Split('-')[0]) + 1));
+                    else if (segment.Trim() != "")
+                        lista.Add(int.Parse(segment));
+                }
+                catch (Exception) {
+                    throw new Exception("Stranice format error");
+                }
             return lista;
         }
 
@@ -137,9 +202,13 @@ namespace Registrator {
             procenatText.Text = "58%";
             opsegBar.Value = 15;
             opsegText.Text = "1.5";
-            formatText.Text = "";
             pojmoviText.Text = "";
+            registarText.ReadOnly = false;
             registarText.Text = "";
+            registarText.ReadOnly = true;
+            straniceText.Text = "";
+            specijalniBox.Checked = false;
+            formatText.Text = "pojam 1, 2, 3";
             tabControl.SelectedTab = tabControl.TabPages["tabPojmovi"];
             openBox.Focus();
         }
