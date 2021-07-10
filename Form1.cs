@@ -170,11 +170,13 @@ namespace Registrator {
                 passInput = false;
                 return true;
             }
+            List<int> ignoreStraniceTemp = StraniceArray(straniceText.Text, fileName);
             return fileName != openText.Text ||
-                   !StraniceArray(straniceText.Text, fileName).All(ignoreStranice.Contains) ||
+                   !ignoreStraniceTemp.All(ignoreStranice.Contains) ||
+                   !ignoreStranice.All(ignoreStraniceTemp.Contains) ||
                    string.Join("", pojmovi) != pojmoviText.Text ||
-                   Math.Abs(procenatBar.Value / 100f - procenat) >= 0.01f ||
-                   Math.Abs(opsegBar.Value / 10f - opseg) >= 0.1f;
+                   Math.Abs(procenatBar.Value / 100f - procenat) >= 0.001f ||
+                   Math.Abs(opsegBar.Value / 10f - opseg) >= 0.01f;
         }
 
         int Min(string br) => br.Trim() == "" ? 1 : int.Parse(br);
