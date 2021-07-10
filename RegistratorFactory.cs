@@ -48,7 +48,8 @@ namespace Registrator {
                                 i--;
                             }
                         }
-                        int minIma = Math.Max(1, (int)Math.Round(pojam.Count * procenat));                     //minimalan broj reči da bi pojam bio nađen
+                        int minIma = Math.Max(pojam.Count == 1 ? 1 : 2,
+                                             (int)Math.Round(pojam.Count * procenat));                         //minimalan broj reči da bi pojam bio nađen
                         int brBezNep = pojam.Count;
                         pojam.AddRange(pojamNep);
 
